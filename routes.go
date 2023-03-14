@@ -19,6 +19,7 @@ func (app *application) routes() *httprouter.Router {
 	r := httprouter.New()
 	r.NotFound = notFoundHandler{}
 	r.HandlerFunc(http.MethodPost, "/user", app.createUser)
+	r.HandlerFunc(http.MethodPost, "/login", app.login)
 	r.HandlerFunc(http.MethodGet, "/profile/:id/image", app.profileImage)
 	return r
 }
