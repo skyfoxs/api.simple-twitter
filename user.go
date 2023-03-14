@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
+	"github.com/julienschmidt/httprouter"
 )
 
 var u = []Profile{}
@@ -46,8 +47,8 @@ func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
 
 	p := Profile{
 		ID:        uuid.NewString(),
-		FirstName: r.FormValue("firstname"),
-		LastName:  r.FormValue("lastname"),
+		Firstname: r.FormValue("firstname"),
+		Lastname:  r.FormValue("lastname"),
 		Email:     r.FormValue("email"),
 		Password:  md5str(r.FormValue("password")),
 		Image:     image,
@@ -85,4 +86,15 @@ func md5str(text string) string {
 	h := md5.New()
 	h.Write([]byte(text))
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+func (app *application) userImage(w http.ResponseWriter, r *http.Request) {
+	id := httprouter.ParamsFromContext(r.Context()).ByName("id")
+	if getUserByID(id) == nil || getUserByID(id).Image == nil {
+		app.respondNotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "image/jpeg")
+	w.WriteHeader(http.StatusOK)
+	w.Write(getUserByID(id).Image.Data)
 }
