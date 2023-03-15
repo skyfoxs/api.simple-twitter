@@ -2,12 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
 
 type Profile struct {
-	ID        string `json:"-"`
+	ID        string `json:"id"`
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
 	Email     string `json:"email"`
@@ -18,6 +19,28 @@ type Profile struct {
 type Image struct {
 	Data []byte
 	Type string
+}
+
+type ProfileResponse struct {
+	ID        string `json:"id"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Email     string `json:"email"`
+	ImageURL  string `json:"imageURL,omitempty"`
+}
+
+func NewProfileResponse(p *Profile) ProfileResponse {
+	var imgURL string
+	if p.Image != nil {
+		imgURL = fmt.Sprintf("/user/%s/image", p.ID)
+	}
+	return ProfileResponse{
+		ID:        p.ID,
+		Firstname: p.Firstname,
+		Lastname:  p.Lastname,
+		Email:     p.Email,
+		ImageURL:  imgURL,
+	}
 }
 
 func (app *application) profileImage(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +62,7 @@ func (app *application) profile(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(getUserByID(id))
+	json.NewEncoder(w).Encode(NewProfileResponse(getUserByID(id)))
 }
 
 func (app *application) patchProfile(w http.ResponseWriter, r *http.Request) {

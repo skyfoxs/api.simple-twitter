@@ -88,6 +88,17 @@ func md5str(text string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+func (app *application) user(w http.ResponseWriter, r *http.Request) {
+	id := httprouter.ParamsFromContext(r.Context()).ByName("id")
+	if getUserByID(id) == nil {
+		app.respondNotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(NewProfileResponse(getUserByID(id)))
+}
+
 func (app *application) userImage(w http.ResponseWriter, r *http.Request) {
 	id := httprouter.ParamsFromContext(r.Context()).ByName("id")
 	if getUserByID(id) == nil || getUserByID(id).Image == nil {
