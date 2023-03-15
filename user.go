@@ -65,18 +65,18 @@ func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func getUserByEmail(e string) *Profile {
-	for _, v := range u {
+	for i, v := range u {
 		if v.Email == e {
-			return &v
+			return &u[i]
 		}
 	}
 	return nil
 }
 
 func getUserByID(id string) *Profile {
-	for _, v := range u {
+	for i, v := range u {
 		if v.ID == id {
-			return &v
+			return &u[i]
 		}
 	}
 	return nil

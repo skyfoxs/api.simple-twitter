@@ -24,5 +24,6 @@ func (app *application) routes() *httprouter.Router {
 	r.HandlerFunc(http.MethodPost, "/login", app.login)
 	r.HandlerFunc(http.MethodGet, "/profile", requiredToken(app.profile))
 	r.HandlerFunc(http.MethodGet, "/profile/image", requiredToken(app.profileImage))
+	r.HandlerFunc(http.MethodPatch, "/profile", requiredToken(app.patchProfile))
 	return r
 }
