@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/skyfoxs/api.simple-twitter/app"
 )
 
 var addr = ":8080"
@@ -12,13 +14,14 @@ var addr = ":8080"
 func main() {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	app := &application{
-		logger: logger,
+	a := &app.Application{
+		Logger:    logger,
+		SecretKey: []byte("SecretYouShouldHide"),
 	}
 
 	server := &http.Server{
 		Addr:         addr,
-		Handler:      app.routes(),
+		Handler:      a.Routes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,

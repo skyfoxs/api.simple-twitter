@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"crypto/md5"
@@ -9,15 +9,17 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
+	"github.com/skyfoxs/api.simple-twitter/pkg/errors"
+	"github.com/skyfoxs/api.simple-twitter/pkg/handler"
 )
 
 var u = []Profile{}
 
-func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
+func (app *Application) createUser(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
-		app.logger.Printf("%v\n", err)
-		app.respondInternalError(w, r)
+		app.Logger.Printf("%v\n", err)
+		handler.InternalServerError(w, r)
 		return
 	}
 
@@ -25,20 +27,20 @@ func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
 	if _, ok := r.MultipartForm.File["image"]; ok {
 		f, _, err := r.FormFile("image")
 		if err != nil {
-			app.logger.Printf("%v\n", err)
-			app.respondInternalError(w, r)
+			app.Logger.Printf("%v\n", err)
+			handler.InternalServerError(w, r)
 			return
 		}
 		defer f.Close()
 
 		b, err := io.ReadAll(f)
 		if err != nil {
-			app.logger.Printf("%v\n", err)
-			app.respondInternalError(w, r)
+			app.Logger.Printf("%v\n", err)
+			handler.InternalServerError(w, r)
 			return
 		}
 		filetype := http.DetectContentType(b)
-		app.logger.Printf("file type: %v\n", filetype)
+		app.Logger.Printf("file type: %v\n", filetype)
 		image = &Image{
 			Data: b,
 			Type: filetype,
@@ -56,11 +58,11 @@ func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
 	if getUserByEmail(p.Email) != nil {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "This email already taken"})
+		json.NewEncoder(w).Encode(errors.New("This email already taken"))
 		return
 	}
 	u = append(u, p)
-	app.logger.Printf("create user: %v %v\n", p.ID, p.Email)
+	app.Logger.Printf("create user: %v %v\n", p.ID, p.Email)
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -88,10 +90,10 @@ func md5str(text string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func (app *application) user(w http.ResponseWriter, r *http.Request) {
+func (app *Application) user(w http.ResponseWriter, r *http.Request) {
 	id := httprouter.ParamsFromContext(r.Context()).ByName("id")
 	if getUserByID(id) == nil {
-		app.respondNotFound(w, r)
+		handler.NotFound(w, r)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -99,10 +101,10 @@ func (app *application) user(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(NewProfileResponse(getUserByID(id)))
 }
 
-func (app *application) userImage(w http.ResponseWriter, r *http.Request) {
+func (app *Application) userImage(w http.ResponseWriter, r *http.Request) {
 	id := httprouter.ParamsFromContext(r.Context()).ByName("id")
 	if getUserByID(id) == nil || getUserByID(id).Image == nil {
-		app.respondNotFound(w, r)
+		handler.NotFound(w, r)
 		return
 	}
 	w.Header().Set("Content-Type", "image/jpeg")

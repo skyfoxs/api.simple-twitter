@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"encoding/json"
@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/skyfoxs/api.simple-twitter/pkg/errors"
+	"github.com/skyfoxs/api.simple-twitter/pkg/handler"
 )
 
 type Credential struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
-
-var secretKey = []byte("SecretYouShouldHide")
 
 type TokenClaims struct {
 	UserID string `json:"userId"`
@@ -24,14 +24,14 @@ type Authentication struct {
 	Token string `json:"token"`
 }
 
-func (app *application) login(w http.ResponseWriter, r *http.Request) {
+func (app *Application) login(w http.ResponseWriter, r *http.Request) {
 	var c Credential
 	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
-		app.logger.Printf("%v\n", err)
+		app.Logger.Printf("%v\n", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "Bad request"})
+		json.NewEncoder(w).Encode(errors.New("Bad request"))
 		return
 	}
 	u := getUserByEmail(c.Email)
@@ -39,7 +39,7 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 	if u == nil || u.Password != md5str(c.Password) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid credentials"})
+		json.NewEncoder(w).Encode(errors.New("Invalid credentials"))
 		return
 	}
 
@@ -52,10 +52,10 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 
-	token, err := t.SignedString(secretKey)
+	token, err := t.SignedString(app.SecretKey)
 	if err != nil {
-		app.logger.Printf("%v\n", err)
-		app.respondInternalError(w, r)
+		app.Logger.Printf("%v\n", err)
+		handler.InternalServerError(w, r)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")

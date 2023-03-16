@@ -1,10 +1,13 @@
-package main
+package app
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/skyfoxs/api.simple-twitter/pkg/handler"
+	"github.com/skyfoxs/api.simple-twitter/pkg/middleware"
 )
 
 type Profile struct {
@@ -43,10 +46,10 @@ func NewProfileResponse(p *Profile) ProfileResponse {
 	}
 }
 
-func (app *application) profileImage(w http.ResponseWriter, r *http.Request) {
-	id := r.Context().Value(ContextUserIDKey).(string)
+func (app *Application) profileImage(w http.ResponseWriter, r *http.Request) {
+	id := r.Context().Value(middleware.UserID).(string)
 	if getUserByID(id) == nil || getUserByID(id).Image == nil {
-		app.respondNotFound(w, r)
+		handler.NotFound(w, r)
 		return
 	}
 	w.Header().Set("Content-Type", "image/jpeg")
@@ -54,10 +57,10 @@ func (app *application) profileImage(w http.ResponseWriter, r *http.Request) {
 	w.Write(getUserByID(id).Image.Data)
 }
 
-func (app *application) profile(w http.ResponseWriter, r *http.Request) {
-	id := r.Context().Value(ContextUserIDKey).(string)
+func (app *Application) profile(w http.ResponseWriter, r *http.Request) {
+	id := r.Context().Value(middleware.UserID).(string)
 	if getUserByID(id) == nil {
-		app.respondNotFound(w, r)
+		handler.NotFound(w, r)
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -65,17 +68,17 @@ func (app *application) profile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(NewProfileResponse(getUserByID(id)))
 }
 
-func (app *application) patchProfile(w http.ResponseWriter, r *http.Request) {
-	id := r.Context().Value(ContextUserIDKey).(string)
+func (app *Application) patchProfile(w http.ResponseWriter, r *http.Request) {
+	id := r.Context().Value(middleware.UserID).(string)
 	u := getUserByID(id)
 	if u == nil {
-		app.respondNotFound(w, r)
+		handler.NotFound(w, r)
 		return
 	}
 	err := r.ParseMultipartForm(32 << 20)
 	if err != nil {
-		app.logger.Printf("%v\n", err)
-		app.respondInternalError(w, r)
+		app.Logger.Printf("%v\n", err)
+		handler.InternalServerError(w, r)
 		return
 	}
 
@@ -83,20 +86,20 @@ func (app *application) patchProfile(w http.ResponseWriter, r *http.Request) {
 	if _, ok := r.MultipartForm.File["image"]; ok {
 		f, _, err := r.FormFile("image")
 		if err != nil {
-			app.logger.Printf("%v\n", err)
-			app.respondInternalError(w, r)
+			app.Logger.Printf("%v\n", err)
+			handler.InternalServerError(w, r)
 			return
 		}
 		defer f.Close()
 
 		b, err := io.ReadAll(f)
 		if err != nil {
-			app.logger.Printf("%v\n", err)
-			app.respondInternalError(w, r)
+			app.Logger.Printf("%v\n", err)
+			handler.InternalServerError(w, r)
 			return
 		}
 		filetype := http.DetectContentType(b)
-		app.logger.Printf("file type: %v\n", filetype)
+		app.Logger.Printf("file type: %v\n", filetype)
 		image = &Image{
 			Data: b,
 			Type: filetype,
@@ -114,6 +117,6 @@ func (app *application) patchProfile(w http.ResponseWriter, r *http.Request) {
 	if image != nil {
 		u.Image = image
 	}
-	app.logger.Printf("patch user: %v %v %v %v\n", u.ID, u.Email, u.Firstname, u.Lastname)
+	app.Logger.Printf("patch user: %v %v %v %v\n", u.ID, u.Email, u.Firstname, u.Lastname)
 	w.WriteHeader(http.StatusAccepted)
 }
