@@ -55,5 +55,7 @@ func (h UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	h.UserModel.Add(*p)
 	h.Logger.Printf("create user: %v %v\n", p.ID, p.Email)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(data.NewProfileResponse(p))
 }

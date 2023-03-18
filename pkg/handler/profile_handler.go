@@ -67,5 +67,7 @@ func (h ProfileHandler) Patch(w http.ResponseWriter, r *http.Request) {
 		p.Image = t.Image
 	}
 	h.Logger.Printf("patch user: %v %v %v %v\n", p.ID, p.Email, p.Firstname, p.Lastname)
-	w.WriteHeader(http.StatusAccepted)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(data.NewProfileResponse(p))
 }

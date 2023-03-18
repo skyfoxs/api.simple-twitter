@@ -36,5 +36,7 @@ func (h PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	h.PostModel.Add(p)
 	h.Logger.Printf("create post: %v %v user: %v\n", p.ID, p.Message, p.UserID)
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(data.NewPostResponse(&p))
 }
