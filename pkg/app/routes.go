@@ -39,7 +39,10 @@ func (app *Application) Routes() *httprouter.Router {
 
 	r.HandlerFunc(http.MethodGet, "/profile", m.TokenRequired(p.Info))
 	r.HandlerFunc(http.MethodGet, "/profile/image", m.TokenRequired(p.Image))
+	r.HandlerFunc(http.MethodGet, "/profile/following", m.TokenRequired(p.GetFollowing))
 	r.HandlerFunc(http.MethodPatch, "/profile", m.TokenRequired(p.Patch))
+	r.HandlerFunc(http.MethodPost, "/profile/following", m.TokenRequired(p.AddFollowing))
+	r.HandlerFunc(http.MethodDelete, "/profile/following", m.TokenRequired(p.DeleteFollowing))
 
 	r.HandlerFunc(http.MethodPost, "/post", m.TokenRequired(po.Create))
 	return r

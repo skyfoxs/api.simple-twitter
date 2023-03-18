@@ -71,3 +71,51 @@ func (h ProfileHandler) Patch(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data.NewProfileResponse(p))
 }
+
+func (h ProfileHandler) GetFollowing(w http.ResponseWriter, r *http.Request) {
+	id := r.Context().Value(constants.UserID).(string)
+	p := h.UserModel.GetByID(id)
+	if p == nil {
+		NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(data.NewFollowingResponse(h.UserModel.GetFollowing(p)))
+}
+
+func (h ProfileHandler) AddFollowing(w http.ResponseWriter, r *http.Request) {
+	id := r.Context().Value(constants.UserID).(string)
+	var req data.FollowingRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		h.Logger.Printf("%v\n", err)
+		BadRequest(w, r)
+		return
+	}
+
+	if ok := h.UserModel.AddFollowing(id, req.ID); !ok {
+		BadRequest(w, r)
+		return
+	}
+	h.Logger.Printf("user %v start follow user %v\n", id, req.ID)
+	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h ProfileHandler) DeleteFollowing(w http.ResponseWriter, r *http.Request) {
+	id := r.Context().Value(constants.UserID).(string)
+	var req data.FollowingRequest
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		h.Logger.Printf("%v\n", err)
+		BadRequest(w, r)
+		return
+	}
+
+	if ok := h.UserModel.DeleteFollowing(id, req.ID); !ok {
+		BadRequest(w, r)
+		return
+	}
+	h.Logger.Printf("user %v unfollow user %v\n", id, req.ID)
+	w.WriteHeader(http.StatusNoContent)
+}

@@ -15,6 +15,7 @@ type Profile struct {
 	Email     string
 	Password  string
 	Image     *Image
+	Following []string
 }
 
 type Image struct {

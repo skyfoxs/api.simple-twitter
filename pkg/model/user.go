@@ -41,3 +41,68 @@ func (m *UserModel) GetByEmail(e string) *idata.Profile {
 func (m *UserModel) Add(p idata.Profile) {
 	m.users = append(m.users, p)
 }
+
+func (m *UserModel) GetFollowing(p *idata.Profile) []idata.Profile {
+	if p.Following == nil {
+		return []idata.Profile{}
+	}
+	result := []idata.Profile{}
+	for _, fid := range p.Following {
+		result = append(result, *m.GetByID(fid))
+	}
+	return result
+}
+
+func (m *UserModel) AddFollowing(pid string, fid string) (ok bool) {
+	p, _, ok := m.usersExistAndNotSame(pid, fid)
+	if !ok {
+		return false
+	}
+
+	if p.Following == nil {
+		p.Following = []string{fid}
+		return true
+	}
+	for _, v := range p.Following {
+		if v == fid {
+			return true
+		}
+	}
+	p.Following = append(p.Following, fid)
+	return true
+}
+
+func (m *UserModel) DeleteFollowing(pid string, fid string) (ok bool) {
+	p, _, ok := m.usersExistAndNotSame(pid, fid)
+	if !ok {
+		return false
+	}
+
+	if p.Following == nil {
+		p.Following = []string{}
+		return true
+	}
+	r := []string{}
+	for _, v := range p.Following {
+		if v != fid {
+			r = append(r, v)
+		}
+	}
+	p.Following = r
+	return true
+}
+
+func (m *UserModel) usersExistAndNotSame(pid, fid string) (p, f *idata.Profile, ok bool) {
+	if pid == fid {
+		return nil, nil, false
+	}
+	p = m.GetByID(pid)
+	if p == nil {
+		return nil, nil, false
+	}
+	f = m.GetByID(fid)
+	if f == nil {
+		return nil, nil, false
+	}
+	return p, f, true
+}
