@@ -5,13 +5,10 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/skyfoxs/api.simple-twitter/pkg/auth"
+	"github.com/skyfoxs/api.simple-twitter/pkg/constants"
 	"github.com/skyfoxs/api.simple-twitter/pkg/handler"
 )
-
-type ContextKey string
-
-const UserID ContextKey = "user"
 
 type JWTAuth struct {
 	Secret []byte
@@ -25,19 +22,12 @@ func (m JWTAuth) TokenRequired(f http.HandlerFunc) http.HandlerFunc {
 			handler.Unauthorized(w, r)
 			return
 		}
-		t, err := jwt.Parse(s[1], func(token *jwt.Token) (interface{}, error) {
-			return m.Secret, nil
-		})
+		uid, err := auth.ExtractUserIDFromToken(s[1], m.Secret)
 		if err != nil {
 			handler.Unauthorized(w, r)
 			return
 		}
-
-		if claims, ok := t.Claims.(jwt.MapClaims); ok && t.Valid {
-			ctx := context.WithValue(r.Context(), UserID, claims["userId"])
-			f.ServeHTTP(w, r.WithContext(ctx))
-		} else {
-			handler.Unauthorized(w, r)
-		}
+		ctx := context.WithValue(r.Context(), constants.UserID, uid)
+		f.ServeHTTP(w, r.WithContext(ctx))
 	}
 }

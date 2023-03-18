@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/skyfoxs/api.simple-twitter/pkg/errors"
+	"github.com/skyfoxs/api.simple-twitter/pkg/handler/data"
 )
 
 type InternalServerErrorHandler struct{}
@@ -12,7 +12,7 @@ type InternalServerErrorHandler struct{}
 func (h InternalServerErrorHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusInternalServerError)
-	json.NewEncoder(w).Encode(errors.New("Internal server error"))
+	json.NewEncoder(w).Encode(data.ErrorResponse{Message: "Internal server error"})
 }
 
 func InternalServerError(w http.ResponseWriter, r *http.Request) {

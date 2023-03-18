@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/skyfoxs/api.simple-twitter/pkg/errors"
+	"github.com/skyfoxs/api.simple-twitter/pkg/handler/data"
 )
 
 type NotFoundHandler struct{}
@@ -12,7 +12,7 @@ type NotFoundHandler struct{}
 func (n NotFoundHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusNotFound)
-	json.NewEncoder(w).Encode(errors.New("Resource not found"))
+	json.NewEncoder(w).Encode(data.ErrorResponse{Message: "Resource not found"})
 }
 
 func NotFound(w http.ResponseWriter, r *http.Request) {

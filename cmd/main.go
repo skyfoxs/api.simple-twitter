@@ -6,7 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/skyfoxs/api.simple-twitter/app"
+	"github.com/skyfoxs/api.simple-twitter/pkg/app"
+	"github.com/skyfoxs/api.simple-twitter/pkg/model"
 )
 
 var addr = ":8080"
@@ -16,6 +17,7 @@ func main() {
 
 	a := &app.Application{
 		Logger:    logger,
+		UserModel: model.NewUser(),
 		SecretKey: []byte("SecretYouShouldHide"),
 	}
 
