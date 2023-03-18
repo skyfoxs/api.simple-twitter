@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/skyfoxs/api.simple-twitter/pkg/constants"
+	"github.com/skyfoxs/api.simple-twitter/pkg/handler/data"
 	"github.com/skyfoxs/api.simple-twitter/pkg/idata"
 	"github.com/skyfoxs/api.simple-twitter/pkg/model"
 )
@@ -17,13 +18,9 @@ type PostHandler struct {
 	PostModel model.PostModel
 }
 
-type PostRequest struct {
-	Message string `json:"message"`
-}
-
 func (h PostHandler) Create(w http.ResponseWriter, r *http.Request) {
 	uid := r.Context().Value(constants.UserID).(string)
-	var pr PostRequest
+	var pr data.PostRequest
 	err := json.NewDecoder(r.Body).Decode(&pr)
 	if err != nil {
 		h.Logger.Printf("%v\n", err)
