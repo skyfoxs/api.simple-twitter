@@ -23,6 +23,10 @@ func (app *Application) Routes() *httprouter.Router {
 		Logger:    app.Logger,
 		UserModel: app.UserModel,
 	}
+	po := handler.PostHandler{
+		Logger:    app.Logger,
+		PostModel: *app.PostModel,
+	}
 
 	r := httprouter.New()
 	r.NotFound = handler.NotFoundHandler{}
@@ -36,5 +40,7 @@ func (app *Application) Routes() *httprouter.Router {
 	r.HandlerFunc(http.MethodGet, "/profile", m.TokenRequired(p.Info))
 	r.HandlerFunc(http.MethodGet, "/profile/image", m.TokenRequired(p.Image))
 	r.HandlerFunc(http.MethodPatch, "/profile", m.TokenRequired(p.Patch))
+
+	r.HandlerFunc(http.MethodPost, "/post", m.TokenRequired(po.Create))
 	return r
 }

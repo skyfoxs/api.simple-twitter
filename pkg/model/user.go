@@ -9,35 +9,35 @@ type UserModel struct {
 	users []idata.Profile
 }
 
-func NewUser() *UserModel {
+func NewUserModel() *UserModel {
 	return &UserModel{
 		users: []idata.Profile{},
 	}
 }
 
-func (a *UserModel) Get(e string, p string) (up *idata.Profile, valid bool) {
-	up = a.GetByEmail(e)
+func (m *UserModel) Get(e string, p string) (up *idata.Profile, valid bool) {
+	up = m.GetByEmail(e)
 	return up, up != nil && up.Password == encrypt.MD5str(p)
 }
 
-func (a *UserModel) GetByID(id string) *idata.Profile {
-	for i, v := range a.users {
+func (m *UserModel) GetByID(id string) *idata.Profile {
+	for i, v := range m.users {
 		if v.ID == id {
-			return &a.users[i]
+			return &m.users[i]
 		}
 	}
 	return nil
 }
 
-func (a *UserModel) GetByEmail(e string) *idata.Profile {
-	for i, v := range a.users {
+func (m *UserModel) GetByEmail(e string) *idata.Profile {
+	for i, v := range m.users {
 		if v.Email == e {
-			return &a.users[i]
+			return &m.users[i]
 		}
 	}
 	return nil
 }
 
-func (a *UserModel) Add(p idata.Profile) {
-	a.users = append(a.users, p)
+func (m *UserModel) Add(p idata.Profile) {
+	m.users = append(m.users, p)
 }

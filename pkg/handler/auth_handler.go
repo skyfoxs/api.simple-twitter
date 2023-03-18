@@ -21,9 +21,7 @@ func (h AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
 		h.Logger.Printf("%v\n", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(data.ErrorResponse{Message: "Bad request"})
+		BadRequest(w, r)
 		return
 	}
 	if p, ok := h.UserModel.Get(c.Email, c.Password); ok {

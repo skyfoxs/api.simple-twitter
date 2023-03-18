@@ -17,7 +17,8 @@ func main() {
 
 	a := &app.Application{
 		Logger:    logger,
-		UserModel: model.NewUser(),
+		UserModel: model.NewUserModel(),
+		PostModel: model.NewPostModel(),
 		SecretKey: []byte("SecretYouShouldHide"),
 	}
 

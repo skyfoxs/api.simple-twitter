@@ -9,5 +9,6 @@ import (
 type Application struct {
 	Logger    *log.Logger
 	UserModel *model.UserModel
+	PostModel *model.PostModel
 	SecretKey []byte
 }
