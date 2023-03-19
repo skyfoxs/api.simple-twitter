@@ -15,7 +15,7 @@ import (
 
 type PostHandler struct {
 	Logger    *log.Logger
-	PostModel model.PostModel
+	PostModel *model.PostModel
 }
 
 func (h PostHandler) Create(w http.ResponseWriter, r *http.Request) {

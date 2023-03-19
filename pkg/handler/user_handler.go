@@ -75,6 +75,7 @@ func (h UserHandler) GetFollowing(w http.ResponseWriter, r *http.Request) {
 
 func (h UserHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 	id := httprouter.ParamsFromContext(r.Context()).ByName("id")
+	h.Logger.Printf("get post user id: %v\n", id)
 	p := h.UserModel.GetByID(id)
 	if p == nil {
 		NotFound(w, r)

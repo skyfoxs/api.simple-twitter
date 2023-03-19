@@ -13,7 +13,7 @@ type PostRequest struct {
 type PostResponse struct {
 	ID             string    `json:"id"`
 	Message        string    `json:"message"`
-	UserID         string    `json:"-"`
+	UserID         string    `json:"userId"`
 	Datetime       time.Time `json:"datetime"`
 	ConversationID *string   `json:"-"`
 	Likes          []string  `json:"-"`
@@ -22,6 +22,7 @@ type PostResponse struct {
 func NewPostResponse(p *idata.Post) PostResponse {
 	return PostResponse{
 		ID:       p.ID,
+		UserID:   p.UserID,
 		Message:  p.Message,
 		Datetime: p.Datetime,
 	}

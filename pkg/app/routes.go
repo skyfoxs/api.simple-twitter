@@ -26,7 +26,7 @@ func (app *Application) Routes() *httprouter.Router {
 	}
 	po := handler.PostHandler{
 		Logger:    app.Logger,
-		PostModel: *app.PostModel,
+		PostModel: app.PostModel,
 	}
 
 	r := httprouter.New()

@@ -43,7 +43,7 @@ func NewFollowingResponse(l []idata.Profile) FollowingResponse {
 }
 
 type GetPostResponse struct {
-	Post []PostResponse `json:"post"`
+	Posts []PostResponse `json:"posts"`
 }
 
 func NewGetPostResponse(pl []idata.Post) GetPostResponse {
@@ -52,6 +52,6 @@ func NewGetPostResponse(pl []idata.Post) GetPostResponse {
 		result = append(result, NewPostResponse(&v))
 	}
 	return GetPostResponse{
-		Post: result,
+		Posts: result,
 	}
 }
