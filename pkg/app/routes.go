@@ -33,7 +33,7 @@ func (app *Application) Routes() *httprouter.Router {
 
 	r.HandlerFunc(http.MethodGet, "/user/:id", u.Info)
 	r.HandlerFunc(http.MethodGet, "/user/:id/image", u.Image)
-	r.HandlerFunc(http.MethodGet, "/user/:id/following", (u.GetFollowing))
+	r.HandlerFunc(http.MethodGet, "/user/:id/following", u.GetFollowing)
 	r.HandlerFunc(http.MethodPost, "/user", u.Create)
 
 	r.HandlerFunc(http.MethodPost, "/login", a.Login)
