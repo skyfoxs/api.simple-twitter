@@ -6,15 +6,6 @@ import (
 	"github.com/skyfoxs/api.simple-twitter/pkg/idata"
 )
 
-type LoginRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type LoginResponse struct {
-	Token string `json:"token"`
-}
-
 type ProfileResponse struct {
 	ID        string `json:"id"`
 	Firstname string `json:"firstname"`
@@ -34,5 +25,33 @@ func NewProfileResponse(p *idata.Profile) ProfileResponse {
 		Lastname:  p.Lastname,
 		Email:     p.Email,
 		ImageURL:  imgURL,
+	}
+}
+
+type FollowingResponse struct {
+	Following []ProfileResponse `json:"following"`
+}
+
+func NewFollowingResponse(l []idata.Profile) FollowingResponse {
+	f := []ProfileResponse{}
+	for _, v := range l {
+		f = append(f, NewProfileResponse(&v))
+	}
+	return FollowingResponse{
+		Following: f,
+	}
+}
+
+type GetPostResponse struct {
+	Post []PostResponse `json:"post"`
+}
+
+func NewGetPostResponse(pl []idata.Post) GetPostResponse {
+	result := []PostResponse{}
+	for _, v := range pl {
+		result = append(result, NewPostResponse(&v))
+	}
+	return GetPostResponse{
+		Post: result,
 	}
 }

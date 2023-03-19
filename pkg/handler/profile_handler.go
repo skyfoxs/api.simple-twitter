@@ -16,30 +16,6 @@ type ProfileHandler struct {
 	UserModel *model.UserModel
 }
 
-func (h ProfileHandler) Info(w http.ResponseWriter, r *http.Request) {
-	id := r.Context().Value(constants.UserID).(string)
-	p := h.UserModel.GetByID(id)
-	if p == nil {
-		NotFound(w, r)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(data.NewProfileResponse(p))
-}
-
-func (h ProfileHandler) Image(w http.ResponseWriter, r *http.Request) {
-	id := r.Context().Value(constants.UserID).(string)
-	p := h.UserModel.GetByID(id)
-	if p == nil || p.Image == nil {
-		NotFound(w, r)
-		return
-	}
-	w.Header().Set("Content-Type", p.Image.Type)
-	w.WriteHeader(http.StatusOK)
-	w.Write(p.Image.Data)
-}
-
 func (h ProfileHandler) Patch(w http.ResponseWriter, r *http.Request) {
 	id := r.Context().Value(constants.UserID).(string)
 	p := h.UserModel.GetByID(id)
@@ -70,18 +46,6 @@ func (h ProfileHandler) Patch(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data.NewProfileResponse(p))
-}
-
-func (h ProfileHandler) GetFollowing(w http.ResponseWriter, r *http.Request) {
-	id := r.Context().Value(constants.UserID).(string)
-	p := h.UserModel.GetByID(id)
-	if p == nil {
-		NotFound(w, r)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(data.NewFollowingResponse(h.UserModel.GetFollowing(p)))
 }
 
 func (h ProfileHandler) AddFollowing(w http.ResponseWriter, r *http.Request) {

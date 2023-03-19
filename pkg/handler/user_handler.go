@@ -14,6 +14,7 @@ import (
 type UserHandler struct {
 	Logger    *log.Logger
 	UserModel *model.UserModel
+	PostModel *model.PostModel
 }
 
 func (h UserHandler) Info(w http.ResponseWriter, r *http.Request) {
@@ -70,4 +71,16 @@ func (h UserHandler) GetFollowing(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(data.NewFollowingResponse(h.UserModel.GetFollowing(p)))
+}
+
+func (h UserHandler) GetPost(w http.ResponseWriter, r *http.Request) {
+	id := httprouter.ParamsFromContext(r.Context()).ByName("id")
+	p := h.UserModel.GetByID(id)
+	if p == nil {
+		NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(data.NewGetPostResponse(h.PostModel.GetByUserID(id)))
 }
