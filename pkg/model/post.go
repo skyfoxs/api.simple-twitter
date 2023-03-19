@@ -25,3 +25,19 @@ func (m *PostModel) GetByUserID(uid string) []idata.Post {
 	}
 	return result
 }
+
+func (m *PostModel) GetFeed(uid string, fid []string) []idata.Post {
+	fidMap := map[string]bool{}
+	result := []idata.Post{}
+	fidMap[uid] = true
+	for _, v := range fid {
+		fidMap[v] = true
+	}
+
+	for _, v := range m.posts {
+		if _, ok := fidMap[v.UserID]; ok {
+			result = append(result, v)
+		}
+	}
+	return result
+}

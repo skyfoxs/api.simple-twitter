@@ -14,6 +14,7 @@ import (
 type ProfileHandler struct {
 	Logger    *log.Logger
 	UserModel *model.UserModel
+	PostModel *model.PostModel
 }
 
 func (h ProfileHandler) Patch(w http.ResponseWriter, r *http.Request) {
@@ -82,4 +83,16 @@ func (h ProfileHandler) DeleteFollowing(w http.ResponseWriter, r *http.Request) 
 	}
 	h.Logger.Printf("user %v unfollow user %v\n", id, req.ID)
 	w.WriteHeader(http.StatusNoContent)
+}
+
+func (h ProfileHandler) GetFeed(w http.ResponseWriter, r *http.Request) {
+	id := r.Context().Value(constants.UserID).(string)
+	p := h.UserModel.GetByID(id)
+	if p == nil {
+		NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(data.NewGetPostResponse(h.PostModel.GetFeed(id, p.Following)))
 }

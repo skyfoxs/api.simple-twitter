@@ -23,6 +23,7 @@ func (app *Application) Routes() *httprouter.Router {
 	p := handler.ProfileHandler{
 		Logger:    app.Logger,
 		UserModel: app.UserModel,
+		PostModel: app.PostModel,
 	}
 	po := handler.PostHandler{
 		Logger:    app.Logger,
@@ -36,6 +37,8 @@ func (app *Application) Routes() *httprouter.Router {
 	r.HandlerFunc(http.MethodGet, "/user/:id/image", u.Image)
 	r.HandlerFunc(http.MethodGet, "/user/:id/following", u.GetFollowing)
 	r.HandlerFunc(http.MethodGet, "/user/:id/post", u.GetPost)
+
+	r.HandlerFunc(http.MethodGet, "/feed", m.TokenRequired(p.GetFeed))
 
 	r.HandlerFunc(http.MethodPost, "/user", u.Create)
 	r.HandlerFunc(http.MethodPost, "/login", a.Login)
