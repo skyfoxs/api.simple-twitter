@@ -8,7 +8,7 @@ import (
 	"github.com/skyfoxs/api.simple-twitter/pkg/model"
 )
 
-func TestGetByID_ShouldReturnPop(t *testing.T) {
+func TestGetByID_ShouldReturnPop_WhenUsingPopID(t *testing.T) {
 	um := model.NewUserModel()
 	um.Add(pop)
 
@@ -26,7 +26,7 @@ func TestGetByID_ShouldReturnPop(t *testing.T) {
 	}
 }
 
-func TestGetByID_ShouldReturnJohn(t *testing.T) {
+func TestGetByID_ShouldReturnJohn_WhenUsingJohnID(t *testing.T) {
 	um := model.NewUserModel()
 	um.Add(pop)
 	um.Add(john)
@@ -45,7 +45,7 @@ func TestGetByID_ShouldReturnJohn(t *testing.T) {
 	}
 }
 
-func TestGetByID_ShouldReturnNil(t *testing.T) {
+func TestGetByID_ShouldReturnNil_WhenUserIDNotExist(t *testing.T) {
 	um := model.NewUserModel()
 	um.Add(pop)
 	um.Add(john)
@@ -57,7 +57,7 @@ func TestGetByID_ShouldReturnNil(t *testing.T) {
 	}
 }
 
-func TestGetByEmail_ShouldReturnPop(t *testing.T) {
+func TestGetByEmail_ShouldReturnPop_WhenUsingPopEmail(t *testing.T) {
 	um := model.NewUserModel()
 	um.Add(pop)
 
@@ -75,7 +75,7 @@ func TestGetByEmail_ShouldReturnPop(t *testing.T) {
 	}
 }
 
-func TestGetByEmail_ShouldReturnJohn(t *testing.T) {
+func TestGetByEmail_ShouldReturnJohn_WhenUsingJohnEmail(t *testing.T) {
 	um := model.NewUserModel()
 	um.Add(pop)
 	um.Add(john)
@@ -94,7 +94,7 @@ func TestGetByEmail_ShouldReturnJohn(t *testing.T) {
 	}
 }
 
-func TestGetByEmail_ShouldReturnNil(t *testing.T) {
+func TestGetByEmail_ShouldReturnNil_WhenEmailNotExist(t *testing.T) {
 	um := model.NewUserModel()
 	um.Add(pop)
 	um.Add(john)
@@ -111,7 +111,7 @@ func TestGetByEmailAndPassword_ShouldReturnPop(t *testing.T) {
 	um.Add(pop)
 	um.Add(john)
 
-	if e, valid := um.Get(pop.Email, "password"); valid {
+	if e, valid := um.Get(pop.Email, "pop-password"); valid {
 		if e == nil {
 			t.Error("expect result to not be nil")
 			return
@@ -127,12 +127,12 @@ func TestGetByEmailAndPassword_ShouldReturnPop(t *testing.T) {
 	}
 }
 
-func TestGetByEmailAndPassword_ShouldReturnNil(t *testing.T) {
+func TestGetByEmailAndPassword_ShouldReturnNil_WhenPasswordIsWrong(t *testing.T) {
 	um := model.NewUserModel()
 	um.Add(pop)
 	um.Add(john)
 
-	if e, valid := um.Get(pop.Email, "wrong-password"); valid {
+	if e, valid := um.Get(pop.Email, "john-password"); valid {
 		t.Error("expect password to not valid")
 		if e != nil {
 			t.Error("expect result to be nil")
@@ -146,7 +146,7 @@ var pop = idata.Profile{
 	Firstname: "Pakornpat",
 	Lastname:  "Sinjiranon",
 	Email:     "skyfox.ku@gmail.com",
-	Password:  encrypt.MD5str("password"),
+	Password:  encrypt.MD5str("pop-password"),
 }
 
 var john = idata.Profile{
@@ -154,5 +154,5 @@ var john = idata.Profile{
 	Firstname: "John",
 	Lastname:  "Doe",
 	Email:     "john@gmail.com",
-	Password:  encrypt.MD5str("johnpass"),
+	Password:  encrypt.MD5str("john-password"),
 }
