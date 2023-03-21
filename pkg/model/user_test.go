@@ -156,3 +156,11 @@ var john = idata.Profile{
 	Email:     "john@gmail.com",
 	Password:  encrypt.MD5str("john-password"),
 }
+
+var alex = idata.Profile{
+	ID:        "alex-uuid",
+	Firstname: "Alex",
+	Lastname:  "Doe",
+	Email:     "alex@gmail.com",
+	Password:  encrypt.MD5str("alex-password"),
+}

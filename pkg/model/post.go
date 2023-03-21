@@ -13,7 +13,7 @@ func NewPostModel() *PostModel {
 }
 
 func (m *PostModel) Add(p idata.Post) {
-	m.posts = append(m.posts, p)
+	m.posts = append([]idata.Post{p}, m.posts...)
 }
 
 func (m *PostModel) GetByUserID(uid string) []idata.Post {
