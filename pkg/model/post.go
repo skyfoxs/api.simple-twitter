@@ -16,6 +16,15 @@ func (m *PostModel) Add(p idata.Post) {
 	m.posts = append([]idata.Post{p}, m.posts...)
 }
 
+func (m *PostModel) GetByID(id string) *idata.Post {
+	for i, v := range m.posts {
+		if v.ID == id {
+			return &m.posts[i]
+		}
+	}
+	return nil
+}
+
 func (m *PostModel) GetByUserID(uid string) []idata.Post {
 	result := []idata.Post{}
 	for _, v := range m.posts {

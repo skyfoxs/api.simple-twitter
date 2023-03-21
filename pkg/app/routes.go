@@ -43,6 +43,7 @@ func (app *Application) Routes() *httprouter.Router {
 	r.HandlerFunc(http.MethodPost, "/user", u.Create)
 	r.HandlerFunc(http.MethodPost, "/login", a.Login)
 	r.HandlerFunc(http.MethodPost, "/post", m.TokenRequired(po.Create))
+	r.HandlerFunc(http.MethodPost, "/post/:id/comment", m.TokenRequired(po.CreateComment))
 	r.HandlerFunc(http.MethodPost, "/profile/following", m.TokenRequired(p.AddFollowing))
 
 	r.HandlerFunc(http.MethodPatch, "/profile", m.TokenRequired(p.Patch))

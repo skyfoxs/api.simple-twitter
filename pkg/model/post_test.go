@@ -111,7 +111,7 @@ var popPost2 = idata.Post{
 }
 
 var johnPost = idata.Post{
-	ID:       "john-post",
+	ID:       "john-post-1",
 	Message:  "Hello, I'm John",
 	UserID:   john.ID,
 	Datetime: time.Date(2023, 3, 21, 10, 15, 0, 0, time.UTC),
