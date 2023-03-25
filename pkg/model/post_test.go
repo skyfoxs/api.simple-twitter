@@ -96,6 +96,28 @@ func TestGetFeed_ShouldReturnSortedPostsFromUserIDCombinedWithPostsFromFollowing
 	}
 }
 
+func TestAddComment(t *testing.T) {
+	um := model.NewPostModel()
+	um.Add(popPost1)
+	if ok := um.AddComment(popPost1.ID, johnComment); !ok {
+		t.Error("expect can add comment")
+		return
+	}
+	r := um.GetByID(popPost1.ID)
+	if len(r.Comments) != 1 {
+		t.Error("expect to have 1 comment")
+		return
+	}
+	if r.Comments[0].UserID != john.ID {
+		t.Error("expect comment come from john")
+		return
+	}
+	if r.Comments[0].Message != johnComment.Message {
+		t.Error("expect comment come from john")
+		return
+	}
+}
+
 var popPost1 = idata.Post{
 	ID:       "pop-post-1",
 	Message:  "Hello, I'm Pop",
@@ -115,6 +137,13 @@ var johnPost = idata.Post{
 	Message:  "Hello, I'm John",
 	UserID:   john.ID,
 	Datetime: time.Date(2023, 3, 21, 10, 15, 0, 0, time.UTC),
+}
+
+var johnComment = idata.Post{
+	ID:       "john-post-2",
+	Message:  "Hi Pop, I'm John",
+	UserID:   john.ID,
+	Datetime: time.Date(2023, 3, 22, 10, 15, 0, 0, time.UTC),
 }
 
 var alexPost = idata.Post{

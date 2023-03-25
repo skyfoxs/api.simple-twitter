@@ -52,18 +52,15 @@ func (h PostHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 		BadRequest(w, r)
 		return
 	}
-
 	c := idata.Post{
 		ID:       uuid.NewString(),
 		Message:  pr.Message,
 		UserID:   uid,
 		Datetime: time.Now(),
 	}
-	p := h.PostModel.GetByID(pid)
-	if p.Comments == nil {
-		p.Comments = []idata.Post{c}
-	} else {
-		p.Comments = append(p.Comments, c)
+	if ok := h.PostModel.AddComment(pid, c); !ok {
+		NotFound(w, r)
+		return
 	}
 	h.Logger.Printf("comment to %v : %v %v user: %v\n", pid, c.ID, c.Message, c.UserID)
 	w.Header().Set("Content-Type", "application/json")

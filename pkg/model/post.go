@@ -16,6 +16,19 @@ func (m *PostModel) Add(p idata.Post) {
 	m.posts = append([]idata.Post{p}, m.posts...)
 }
 
+func (m *PostModel) AddComment(id string, c idata.Post) (ok bool) {
+	p := m.GetByID(id)
+	if p == nil {
+		return false
+	}
+	if p.Comments == nil {
+		p.Comments = []idata.Post{c}
+	} else {
+		p.Comments = append(p.Comments, c)
+	}
+	return true
+}
+
 func (m *PostModel) GetByID(id string) *idata.Post {
 	for i, v := range m.posts {
 		if v.ID == id {
