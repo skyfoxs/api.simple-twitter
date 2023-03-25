@@ -70,7 +70,7 @@ func (h UserHandler) GetFollowing(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(data.NewFollowingResponse(h.UserModel.GetFollowing(p)))
+	json.NewEncoder(w).Encode(data.NewFollowingResponse(h.UserModel.GetFollowing(id)))
 }
 
 func (h UserHandler) GetPost(w http.ResponseWriter, r *http.Request) {

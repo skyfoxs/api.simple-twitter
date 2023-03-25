@@ -141,6 +141,64 @@ func TestGetByEmailAndPassword_ShouldReturnNil_WhenPasswordIsWrong(t *testing.T)
 	}
 }
 
+func TestAddFollowing_ShouldNotSuccess_WhenUserIDNotExist(t *testing.T) {
+	um := model.NewUserModel()
+	um.Add(pop)
+	um.Add(john)
+	if ok := um.AddFollowing(pop.ID, "not-exist-id"); ok {
+		t.Error("expect can not add non existed user into pop following list")
+		return
+	}
+}
+
+func TestAddFollowing_ShouldNotSuccess_WhenFollowingYourself(t *testing.T) {
+	um := model.NewUserModel()
+	um.Add(pop)
+	um.Add(john)
+	if ok := um.AddFollowing(pop.ID, pop.ID); ok {
+		t.Error("expect can not add yourself into following list")
+		return
+	}
+}
+
+func TestGetFollowing(t *testing.T) {
+	um := model.NewUserModel()
+	um.Add(pop)
+	um.Add(john)
+	if ok := um.AddFollowing(pop.ID, john.ID); !ok {
+		t.Error("expect can add john into pop following list")
+		return
+	}
+	r := um.GetFollowing(pop.ID)
+	if len(r) != 1 {
+		t.Error("expect to have 1 user in pop following list")
+		return
+	}
+	if r[0].ID != john.ID {
+		t.Error("expect john in pop following list")
+		return
+	}
+}
+
+func TestDeleteFollowing(t *testing.T) {
+	um := model.NewUserModel()
+	um.Add(pop)
+	um.Add(john)
+	if ok := um.AddFollowing(pop.ID, john.ID); !ok {
+		t.Error("expect can add john into pop following list")
+		return
+	}
+	if ok := um.DeleteFollowing(pop.ID, john.ID); !ok {
+		t.Error("expect can delete john from pop following list")
+		return
+	}
+	r := um.GetFollowing(pop.ID)
+	if len(r) != 0 {
+		t.Error("expect pop's following list to be empty")
+		return
+	}
+}
+
 var pop = idata.Profile{
 	ID:        "pop-uuid",
 	Firstname: "Pakornpat",

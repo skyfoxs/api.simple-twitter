@@ -42,7 +42,8 @@ func (m *UserModel) Add(p idata.Profile) {
 	m.users = append(m.users, p)
 }
 
-func (m *UserModel) GetFollowing(p *idata.Profile) []idata.Profile {
+func (m *UserModel) GetFollowing(id string) []idata.Profile {
+	p := m.GetByID(id)
 	if p.Following == nil {
 		return []idata.Profile{}
 	}
