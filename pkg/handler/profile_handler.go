@@ -24,14 +24,12 @@ func (h ProfileHandler) Patch(w http.ResponseWriter, r *http.Request) {
 		NotFound(w, r)
 		return
 	}
-
 	t, err := idata.NewProfileFromMultipartFormData(r)
 	if err != nil {
 		h.Logger.Printf("%v\n", err)
 		InternalServerError(w, r)
 		return
 	}
-
 	fn := t.Firstname
 	if fn != "" {
 		p.Firstname = fn
@@ -58,7 +56,6 @@ func (h ProfileHandler) AddFollowing(w http.ResponseWriter, r *http.Request) {
 		BadRequest(w, r)
 		return
 	}
-
 	if ok := h.UserModel.AddFollowing(id, req.ID); !ok {
 		BadRequest(w, r)
 		return
@@ -76,7 +73,6 @@ func (h ProfileHandler) DeleteFollowing(w http.ResponseWriter, r *http.Request) 
 		BadRequest(w, r)
 		return
 	}
-
 	if ok := h.UserModel.DeleteFollowing(id, req.ID); !ok {
 		BadRequest(w, r)
 		return

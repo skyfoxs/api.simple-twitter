@@ -33,7 +33,10 @@ func (h AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(data.LoginResponse{Token: t})
+		json.NewEncoder(w).Encode(data.LoginResponse{
+			UserID: p.ID,
+			Token:  t,
+		})
 		return
 	}
 	Unauthorized(w, r)
