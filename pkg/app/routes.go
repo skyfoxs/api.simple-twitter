@@ -41,7 +41,7 @@ func (app *Application) Routes() *httprouter.Router {
 	r.HandlerFunc(http.MethodGet, "/feed", m.TokenRequired(p.GetFeed))
 
 	r.HandlerFunc(http.MethodPost, "/user", u.Create)
-	r.HandlerFunc(http.MethodPost, "/login", a.Login)
+	r.HandlerFunc(http.MethodPost, "/signin", a.SignIn)
 
 	r.HandlerFunc(http.MethodPost, "/post", m.TokenRequired(po.Create))
 	r.HandlerFunc(http.MethodPost, "/post/:id/comment", m.TokenRequired(po.CreateComment))

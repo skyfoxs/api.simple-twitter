@@ -16,8 +16,8 @@ type AuthHandler struct {
 	SecretKey []byte
 }
 
-func (h AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	var c data.LoginRequest
+func (h AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
+	var c data.SignInRequest
 	err := json.NewDecoder(r.Body).Decode(&c)
 	if err != nil {
 		h.Logger.Printf("%v\n", err)
@@ -33,7 +33,7 @@ func (h AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(data.LoginResponse{
+		json.NewEncoder(w).Encode(data.SignInResponse{
 			UserID: p.ID,
 			Token:  t,
 		})
