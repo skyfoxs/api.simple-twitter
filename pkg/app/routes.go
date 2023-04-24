@@ -30,6 +30,7 @@ func (app *Application) Routes() *httprouter.Router {
 
 	r.HandlerFunc(http.MethodGet, "/posts", m.TokenRequired(post.GetPosts))
 	r.HandlerFunc(http.MethodGet, "/posts/:id", m.TokenRequired(post.GetPostById))
+	r.HandlerFunc(http.MethodGet, "/users", m.TokenRequired(user.Search))
 	r.HandlerFunc(http.MethodGet, "/users/:id", m.TokenRequired(user.Info))
 	r.HandlerFunc(http.MethodGet, "/users/:id/image", m.TokenRequired(user.Image))
 	r.HandlerFunc(http.MethodGet, "/users/:id/following", m.TokenRequired(user.GetFollowing))

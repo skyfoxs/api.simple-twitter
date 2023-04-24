@@ -1,6 +1,8 @@
 package model
 
 import (
+	"strings"
+
 	"github.com/skyfoxs/api.simple-twitter/pkg/encrypt"
 	"github.com/skyfoxs/api.simple-twitter/pkg/idata"
 )
@@ -27,6 +29,16 @@ func (m *UserModel) GetByID(id string) *idata.Profile {
 		}
 	}
 	return nil
+}
+
+func (m *UserModel) GetUserNameContain(q string) []idata.Profile {
+	result := []idata.Profile{}
+	for _, v := range m.users {
+		if strings.Contains(strings.ToLower(v.Firstname), strings.ToLower(q)) || strings.Contains(strings.ToLower(v.Lastname), strings.ToLower(q)) {
+			result = append(result, v)
+		}
+	}
+	return result
 }
 
 func (m *UserModel) GetByEmail(e string) *idata.Profile {

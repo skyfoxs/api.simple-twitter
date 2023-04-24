@@ -151,3 +151,15 @@ func (h UserHandler) DeleteFollowing(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Printf("user %v unfollow user %v\n", id, req.ID)
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (h UserHandler) Search(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query().Get("name")
+	p := h.UserModel.GetUserNameContain(q)
+	if p == nil {
+		NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(data.NewProfilesResponse(p))
+}

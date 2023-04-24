@@ -28,6 +28,20 @@ func NewProfileResponse(p *idata.Profile) ProfileResponse {
 	}
 }
 
+type ProfilesResponse struct {
+	Profiles []ProfileResponse `json:"users"`
+}
+
+func NewProfilesResponse(l []idata.Profile) ProfilesResponse {
+	f := []ProfileResponse{}
+	for _, v := range l {
+		f = append(f, NewProfileResponse(&v))
+	}
+	return ProfilesResponse{
+		Profiles: f,
+	}
+}
+
 type FollowingRequest struct {
 	ID string `json:"id"`
 }
