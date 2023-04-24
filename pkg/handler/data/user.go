@@ -17,7 +17,7 @@ type ProfileResponse struct {
 func NewProfileResponse(p *idata.Profile) ProfileResponse {
 	var imgURL string
 	if p.Image != nil {
-		imgURL = fmt.Sprintf("/user/%s/image", p.ID)
+		imgURL = fmt.Sprintf("/users/%s/image", p.ID)
 	}
 	return ProfileResponse{
 		ID:        p.ID,
@@ -26,6 +26,10 @@ func NewProfileResponse(p *idata.Profile) ProfileResponse {
 		Email:     p.Email,
 		ImageURL:  imgURL,
 	}
+}
+
+type FollowingRequest struct {
+	ID string `json:"id"`
 }
 
 type FollowingResponse struct {

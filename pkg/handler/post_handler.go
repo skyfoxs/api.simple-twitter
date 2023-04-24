@@ -16,6 +16,7 @@ import (
 
 type PostHandler struct {
 	Logger    *log.Logger
+	UserModel *model.UserModel
 	PostModel *model.PostModel
 }
 
@@ -66,4 +67,48 @@ func (h PostHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(data.NewPostResponse(&c))
+}
+
+func (h PostHandler) GetPostById(w http.ResponseWriter, r *http.Request) {
+	id := httprouter.ParamsFromContext(r.Context()).ByName("id")
+	h.Logger.Printf("get post id: %v\n", id)
+	p := h.PostModel.GetByID(id)
+	if p == nil {
+		NotFound(w, r)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(data.NewPostResponse(p))
+}
+
+func (h PostHandler) GetPosts(w http.ResponseWriter, r *http.Request) {
+	t := r.URL.Query().Get("type")
+	uid := r.URL.Query().Get("userId")
+	h.Logger.Printf("get post query params: type=%v, userId=%v\n", t, uid)
+	if t == "individual" {
+		h.Logger.Printf("get individual post with user id: %v\n", uid)
+		p := h.UserModel.GetByID(uid)
+		if p == nil {
+			NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(data.NewGetPostResponse(h.PostModel.GetByUserID(uid)))
+		return
+	}
+	if t == "feed" {
+		id := r.Context().Value(constants.UserID).(string)
+		p := h.UserModel.GetByID(id)
+		if p == nil {
+			NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(data.NewGetPostResponse(h.PostModel.GetFeed(id, p.Following)))
+		return
+	}
+	BadRequest(w, r)
 }

@@ -15,40 +15,34 @@ func (app *Application) Routes() *httprouter.Router {
 		UserModel: app.UserModel,
 		SecretKey: app.SecretKey,
 	}
-	u := handler.UserHandler{
+	user := handler.UserHandler{
 		Logger:    app.Logger,
 		UserModel: app.UserModel,
-		PostModel: app.PostModel,
 	}
-	p := handler.ProfileHandler{
+	post := handler.PostHandler{
 		Logger:    app.Logger,
 		UserModel: app.UserModel,
-		PostModel: app.PostModel,
-	}
-	po := handler.PostHandler{
-		Logger:    app.Logger,
 		PostModel: app.PostModel,
 	}
 
 	r := httprouter.New()
 	r.NotFound = handler.NotFoundHandler{}
 
-	r.HandlerFunc(http.MethodGet, "/user/:id", u.Info)
-	r.HandlerFunc(http.MethodGet, "/user/:id/image", u.Image)
-	r.HandlerFunc(http.MethodGet, "/user/:id/following", u.GetFollowing)
-	r.HandlerFunc(http.MethodGet, "/user/:id/post", u.GetPost)
+	r.HandlerFunc(http.MethodGet, "/posts", m.TokenRequired(post.GetPosts))
+	r.HandlerFunc(http.MethodGet, "/posts/:id", m.TokenRequired(post.GetPostById))
+	r.HandlerFunc(http.MethodGet, "/users/:id", m.TokenRequired(user.Info))
+	r.HandlerFunc(http.MethodGet, "/users/:id/image", m.TokenRequired(user.Image))
+	r.HandlerFunc(http.MethodGet, "/users/:id/following", m.TokenRequired(user.GetFollowing))
 
-	r.HandlerFunc(http.MethodGet, "/feed", m.TokenRequired(p.GetFeed))
+	r.HandlerFunc(http.MethodPost, "/posts", m.TokenRequired(post.Create))
+	r.HandlerFunc(http.MethodPost, "/posts/:id/comment", m.TokenRequired(post.CreateComment))
+	r.HandlerFunc(http.MethodPost, "/users/:id/following", m.TokenRequired(user.AddFollowing))
 
-	r.HandlerFunc(http.MethodPost, "/user", u.Create)
+	r.HandlerFunc(http.MethodDelete, "/users/:id/following", m.TokenRequired(user.DeleteFollowing))
+
+	r.HandlerFunc(http.MethodPatch, "/users/:id", m.TokenRequired(user.Patch))
+
+	r.HandlerFunc(http.MethodPost, "/users", user.Create)
 	r.HandlerFunc(http.MethodPost, "/signin", a.SignIn)
-
-	r.HandlerFunc(http.MethodPost, "/post", m.TokenRequired(po.Create))
-	r.HandlerFunc(http.MethodPost, "/post/:id/comment", m.TokenRequired(po.CreateComment))
-	r.HandlerFunc(http.MethodPost, "/profile/following", m.TokenRequired(p.AddFollowing))
-
-	r.HandlerFunc(http.MethodPatch, "/profile", m.TokenRequired(p.Patch))
-
-	r.HandlerFunc(http.MethodDelete, "/profile/following", m.TokenRequired(p.DeleteFollowing))
 	return r
 }
