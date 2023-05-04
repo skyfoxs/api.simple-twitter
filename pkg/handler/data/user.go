@@ -28,48 +28,30 @@ func NewProfileResponse(p *idata.Profile) ProfileResponse {
 	}
 }
 
-type ProfilesResponse struct {
-	Profiles []ProfileResponse `json:"users"`
-}
-
-func NewProfilesResponse(l []idata.Profile) ProfilesResponse {
+func NewProfilesResponse(l []idata.Profile) []ProfileResponse {
 	f := []ProfileResponse{}
 	for _, v := range l {
 		f = append(f, NewProfileResponse(&v))
 	}
-	return ProfilesResponse{
-		Profiles: f,
-	}
+	return f
 }
 
 type FollowingRequest struct {
 	ID string `json:"id"`
 }
 
-type FollowingResponse struct {
-	Following []ProfileResponse `json:"following"`
-}
-
-func NewFollowingResponse(l []idata.Profile) FollowingResponse {
+func NewFollowingResponse(l []idata.Profile) []ProfileResponse {
 	f := []ProfileResponse{}
 	for _, v := range l {
 		f = append(f, NewProfileResponse(&v))
 	}
-	return FollowingResponse{
-		Following: f,
-	}
+	return f
 }
 
-type GetPostResponse struct {
-	Posts []PostResponse `json:"posts"`
-}
-
-func NewGetPostResponse(pl []idata.Post) GetPostResponse {
+func NewGetPostResponse(pl []idata.Post) []PostResponse {
 	result := []PostResponse{}
 	for _, v := range pl {
 		result = append(result, NewPostResponse(&v))
 	}
-	return GetPostResponse{
-		Posts: result,
-	}
+	return result
 }
